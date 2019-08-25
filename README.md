@@ -12,15 +12,14 @@ The latest version of Serenity supports both Cucumber 2.4 and the more recent Cu
 
 Git:
 
-    git clone https://github.com/serenity-bdd/serenity-cucumber4-starter.git
-    cd serenity-cucumber4-starter
+    git clone https://github.com/narottamgla/selenium-cucumber4-demo
+    cd selenium-cucumber4-demo
 
 
-Or simply [download a zip](https://github.com/serenity-bdd/serenity-cucumber4-starter/archive/master.zip) file.
+Or simply [download a zip](https://github.com/narottamgla/selenium-cucumber4-demo/archive/master.zip) file.
 
 ## The starter project
-The best place to start with Serenity and Cucumber is to clone or download the starter project on Github ([https://github.com/serenity-bdd/serenity-cucumber4-starter](https://github.com/serenity-bdd/serenity-cucumber4-starter)). This project gives you a basic project setup, along with some sample tests and supporting classes. There are two versions to choose from. The master branch uses a more classic approach, using action classes and lightweight page objects, whereas the **[screenplay](https://github.com/serenity-bdd/serenity-cucumber4-starter/tree/screenplay)** branch shows the same sample test implemented using Screenplay.
-
+The best place to start with Serenity and Cucumber is to clone or download the starter project on Github ([https://github.com/narottamgla/selenium-cucumber4-demo](https://github.com/narottamgla/selenium-cucumber4-demo)). This project gives you a basic project setup, along with some sample tests and supporting classes. There are two versions to choose from. The master branch uses a more classic approach, using action classes and lightweight page objects.
 ### The project directory structure
 The project has build scripts for both Maven and Gradle, and follows the standard directory structure used in most Serenity projects:
 ```Gherkin
