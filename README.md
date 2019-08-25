@@ -100,12 +100,12 @@ In the rest of this article, we will walk through some of the highlights of both
 Both variations of the sample project uses the sample Cucumber scenario. In this scenario, Sergey (who likes to search for stuff) is performing a search on the DuckDuckGo search engine:
 
 ```Gherkin
-Feature: Search by keyword
+Feature: Verify Jungle socks home page
 
-  Scenario: Searching for a term
-    Given Sergey is on the DuckDuckGo home page
-    When he searches for "cucumber"
-    Then all the result titles should contain the word "cucumber"
+  Scenario: Verify jungle socks home page navigation
+    Given I open the jungle socks home page url
+    Then I should see jungle socks home page title as "JungleSocks"
+    Then I should see jungle socks home page header as "Welcome To Jungle Socks!"
 ```
 
 This scenario lets us explore a few of the new Cucumber 4 expressions. Cucumber 4 supports both the classic regular expressions, and the new _Cucumber Expressions_, which are more readable albeit not as powerful in some cases. 
@@ -113,23 +113,39 @@ This scenario lets us explore a few of the new Cucumber 4 expressions. Cucumber 
 The glue code for this scenario uses both regular expressions and cucumber expressions. The glue code looks this this:
 
 ```java
-    @Given("^(?:.*) is on the DuckDuckGo home page")	 
-    public void i_am_on_the_DuckDuckGo_home_page() {
-        navigateTo.theDuckDuckGoHomePage();
-    }
+   @Steps
+   HomePageActions homePageActions;
+   
 
-    @When("(s)he searches for {string}")				
-    public void i_search_for(String term) {
-        searchFor.term(term);
-    }
+   @Given("I open the jungle socks home page url")
+   public void i_open_the_jungle_socks_home_page_url()
+   {
+      homePageActions.openJungleSocksHomePageurl();
+   }
 
-    @Then("all the result titles should contain the word {string}")
-    public void all_the_result_titles_should_contain_the_word(String term) {
-        assertThat(searchResult.titles())
-                .matches(results -> results.size() > 0)
-                .allMatch(title ->  
-                         textOf(title).containsIgnoringCase(term));
-    }
+   @Then("I should see jungle socks home page title as {string}")
+   public void i_should_see_jungle_socks_home_page(String title)
+   {
+      homePageActions.verifyHomePageJungleSocksTitle(title);
+   }
+
+   @Then("I should see jungle socks home page header as {string}")
+   public void i_should_see_jungle_socks_home_page_header_as(String header)
+   {
+      homePageActions.verifyJungleSocksHomePageHeader(header);
+   }
+
+   @Then("I should see different products on jungle socks home page")
+   public void i_should_see_different_products_on_jungle_socks_home_page(List productList)
+   {
+      homePageActions.verifyJungleSocksHomeProductDetails(productList);
+   }
+
+   @Then("I should see product as {string} with price as {string} and instock quantity as {string}")
+   public void i_should_see_product_as_with_price_as_and_instock_quantity_as(String productName, String price, String quantity)
+   {
+      homePageActions.verifyProductPriceAndQuantityByName(productName, price, quantity);
+   }
 ```
 
 The `@Given` step uses a regular expression; the action class approach we use here is action-centric, not actor-centric, so we ignore the name of the actor. 
@@ -144,152 +160,132 @@ The glue code shown above uses Serenity step libraries as _action classes_ to ma
 These classes are declared using the Serenity `@Steps` annotation, shown below:
 ```java
     @Steps
-    NavigateTo navigateTo;
+    HomePageActions homePageActions;
 
     @Steps
-    SearchFor searchFor;
-
-    @Steps
-    SearchResult searchResult;
+    HomePageActions homePageActions;
+    
 ```
 
 The `@Steps`annotation tells Serenity to create a new instance of the class, and inject any other steps or page objects that this instance might need. 
 
 Each action class models a particular facet of user behaviour: navigating to a particular page, performing a search, or retrieving the results of a search. These classes are designed to be small and self-contained, which makes them more stable and easier to maintain.
 
-The `NavigateTo` class is an example of a very simple action class. In a larger application, it might have some other methods related to high level navigation, but in our sample project, it just needs to open the DuckDuckGo home page:
 ```java
-public class NavigateTo {
+public class HomePageActions
+{
 
-    DuckDuckGoHomePage duckDuckGoHomePage;
+   HomePage homePage;
 
-    @Step("Open the DuckDuckGo home page")
-    public void theDuckDuckGoHomePage() {
-        duckDuckGoHomePage.open();
-    }
-}
+   /**
+    * 
+    */
+   @Step
+   public void openJungleSocksHomePageurl()
+   {
+      homePage.open();
+
+   }
+
+   /**
+    * 
+    */
+   public void verifyHomePageJungleSocksTitle(String title)
+   {
+      assertThat("Verify create asset page:", homePage.getHomePageTitle(), equalTo(title));
+
+   }
+
+   /**
+    * 
+    */
+   public void verifyJungleSocksHomePageHeader(String header)
+   {
+      assertThat("Verify create asset page:", homePage.getHomePageHeader(), equalTo(header));
+
+   }
+
+   /**
+    * 
+    */
+   public void verifyJungleSocksHomeProductDetails(List productList)
+   {
+      assertThat("Verify create asset page:", homePage.getPoductList(), equalTo(productList));
+
+   }
+
+   /**
+    * 
+    */
+   public void verifyProductPriceAndQuantityByName(String productName, String price, String quantity)
+   {
+      int index = homePage.getProductRowIndexByName(productName);
+      System.out.println("ProductName:" + productName + ", " + index);
+
+      assertThat("Verify product price:", homePage.getProductPriceByIndex(index), equalTo(price));
+      assertThat("Verify product quantity:", homePage.getProductInStockQuantityByIndex(index), equalTo(quantity));
+
+   }
+
 ```
 
-It does this using a standard Serenity Page Object. Page Objects are often very minimal, storing just the URL of the page itself:
 ```java
-@DefaultUrl("https://duckduckgo.com")
-class DuckDuckGoHomePage extends PageObject {}
-```
+public class HomePage extends PageObject
+{
 
-The second class, `SearchFor`, is an interaction class. It needs to interact with the web page, and to enable this, we make the class extend the Serenity `UIInteractionSteps`. This gives the class full access to the powerful Serenity WebDriver API, including the `$()` method used below, which locates a web element using a `By` locator or an XPath or CSS expression:
-```java
-public class SearchFor extends UIInteractionSteps {
+   @FindBy(css = "body > h1")
+   private WebElement homePageHeader;
 
-    @Step("Search for term {0}")
-    public void term(String term) {
-        $(SearchForm.SEARCH_FIELD).clear();
-        $(SearchForm.SEARCH_FIELD).type(term);
-        $(SearchForm.SEARCH_BUTTON).click();
-    }
-} 
-```
+   @FindBy(xpath = "//*[contains(@class,'line_item')]/td[1]")
+   private List<WebElement> productListWebElement;
+   
+   @FindBy(css = "[name=\"state\"]")
+   private WebElement stateDropDown;
+   
+   @FindBy(css = "[name=\"state\"] option")
+   private List<WebElement> stateList;
+   
+   @FindBy(name = "commit")
+   private WebElement checkoutButton;
+   
+   @FindBy(css ="#subtotal")
+   private WebElement productPriceSubTotal;
+   
+   @FindBy(css ="#taxes")
+   private WebElement productTaxesTotal;
+   
+   @FindBy(css ="#total")
+   private WebElement productTotalPrice;
 
-The `SearchForm` class is typical of a light-weight Page Object: it is responsible uniquely for locating elements on the page, and it does this by defining locators or occasionally by resolving web elements dynamically. 
-```java
-class SearchForm {
-    static By SEARCH_FIELD = By.cssSelector(".js-search-input");
-    static By SEARCH_BUTTON = By.cssSelector(".js-search-button");
-}
-```
 
-The last step library class used in the step definition code is the `SearchResult` class. The job of this class is to query the web page, and retrieve a list of search results that we can use in the AssertJ assertion at the end of the test. This class also extends `UIInteractionSteps` and 
-```java
-public class SearchResult extends UIInteractionSteps {
-    public List<String> titles() {
-        return findAll(SearchResultList.RESULT_TITLES)
-                .stream()
-                .map(WebElementFacade::getTextContent)
-                .collect(Collectors.toList());
-    }
-}
-```
+   public String getHomePageTitle()
+   {
+      return getDriver().getTitle();
+   }
 
-The `SearchResultList` class is a lean Page Object that locates the search result titles on the results page:
-```java
-class SearchResultList {
-    static By RESULT_TITLES = By.cssSelector(".result__title");
-}
-```
+   public String getHomePageHeader()
+   {
+      CommonUtils.waitForElementToBeVisible(getDriver(), homePageHeader);
+      return homePageHeader.getText();
+   }
 
+   public List getPoductList()
+   {
+
+      List<String> productList = new ArrayList<>();
+
+      int productSize = productListWebElement.size();
+      for (int i = 0; i < productSize ; i++)
+      {
+         productList.add(productListWebElement.get(i).getText());
+      }
+      return productList;
+
+   }
+   
+   ```
 The main advantage of the approach used in this example is not in the lines of code written, although Serenity does reduce a lot of the boilerplate code that you would normally need to write in a web test. The real advantage is in the use of many small, stable classes, each of which focuses on a single job. This application of the _Single Responsibility Principle_ goes a long way to making the test code more stable, easier to understand, and easier to maintain.
 
-## The Screenplay starter project
-If you prefer to use the Screenplay pattern, or want to try it out, check out the _screenplay_ branch instead of the _master_ branch. In this version of the starter project, the same scenario is implemented using the Screenplay pattern. 
-
-The Screenplay pattern describes tests in terms of actors and the tasks they perform. Tasks are represented as objects performed by an actor, rather than methods. This makes them more flexible and composable, at the cost of being a bit more wordy. Here is an example:
-```java
-    @Before
-    public void setTheStage() {
-        OnStage.setTheStage(new OnlineCast());
-    }
-
-    @Given("^(.*) is on the DuckDuckGo home page")
-    public void on_the_DuckDuckGo_home_page(String actor) {
-        theActorCalled(actor).attemptsTo(         NavigateTo.theDuckDuckGoHomePage()     );
-    }
-
-    @When("she/he searches for {string}")
-    public void search_for(String term) {
-        theActorInTheSpotlight().attemptsTo(
-             SearchFor.term(term)      );
-    }
-
-    @Then("all the result titles should contain the word {string}")
-    public void all_the_result_titles_should_contain_the_word(String term) {
-        theActorInTheSpotlight().should(
-                seeThat("search result titles",
-                        SearchResult.titles(),                     hasSize(greaterThan(0))),
-                seeThat("search result titles",
-                        SearchResult.titles(),                     everyItem(containsIgnoringCase(term)))
-        );
-    }
-```
-
-In both approaches, the Page Objects very close or identical. The differences are mainly in the action classes. Screenplay classes emphasise reusable components and a very readable declarative style, whereas Lean Page Objects and Action Classes opt for a more imperative style.
-
-The `NavigateTo` class performs the same role as it’s equivalent in the Lean Page Object/Action Class version, and looks quite similar:
-```java
-public class NavigateTo  {
-
-    public static Performable theDuckDuckGoHomePage() {
-        return Task.where("{0} opens the DuckDuckGo home page",
-                Open.browserOn().the(DuckDuckGoHomePage.class)
-        );
-    }
-} 
-```
-
-The `SearchFor` class is also similar: it is shown below:
-```java
-public class SearchFor {
-
-    public static Performable term(String term) {
-        return Task.where("{0} attempts to search for #term",
-                Clear.field(SearchForm.SEARCH_FIELD),             Enter.theValue(term).into(SearchForm.SEARCH_FIELD),
-                Click.on(SearchForm.SEARCH_BUTTON)
-        ).with("term").of(term);
-    }
-}
-```
-
-In Screenplay, there is a clear distinction between actions (which change the system state) and questions (which read the system state). In Screenplay, we fetch the search results using a Question class, like this:
-```java
-public class SearchResult {
-    public static Question<List<String>> titles() {
-        return actor ->  
-                 TextContent.of(SearchResultList.RESULT_TITLES)
-                            .viewedBy(actor)
-                            .asList();
-    }
-}
-```
-
-The Screenplay DSL is rich and flexible, and well suited to teams working on large test automation projects with many team members, and who are reasonably comfortable with Java and design patterns. The Lean Page Objects/Action Classes approach proposes a gentler learning curve, but still provides significant advantages in terms of maintainability and reusability.
 
 ## Executing the tests
 To run the sample project, you can either just run the `CucumberTestSuite` test runner class, or run either `mvn verify` or `gradle test` from the command line.
