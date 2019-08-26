@@ -341,16 +341,16 @@ We can also configure environment-specific properties and options, so that the t
 ```json
 environments {
   default {
-    webdriver.base.url = "https://duckduckgo.com"
+    webdriver.base.url = "https://jungle-socks.herokuapp.com/"
   }
   dev {
-    webdriver.base.url = "https://duckduckgo.com/dev"
+    webdriver.base.url = "https://jungle-socks.herokuapp.com/dev"
   }
   staging {
-    webdriver.base.url = "https://duckduckgo.com/staging"
+    webdriver.base.url = "https://jungle-socks.herokuapp.com/staging"
   }
   prod {
-    webdriver.base.url = "https://duckduckgo.com/prod"
+    webdriver.base.url = "https://jungle-socks.herokuapp.com/prod"
   }
 }
 ```
