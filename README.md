@@ -19,7 +19,7 @@ Git:
 Or simply [download a zip](https://github.com/narottamgla/selenium-cucumber4-demo/archive/master.zip) file.
 
 ## The starter project
-The best place to start with Serenity and Cucumber is to clone or download the starter project on Github ([https://github.com/narottamgla/selenium-cucumber4-demo](https://github.com/narottamgla/selenium-cucumber4-demo)). This project gives you a basic project setup, along with some sample tests and supporting classes. There are two versions to choose from. The master branch uses a more classic approach, using action classes and lightweight page objects.
+The best place to start with Serenity and Cucumber is to clone or download the starter project on Github ([https://github.com/narottamgla/selenium-cucumber4-demo](https://github.com/narottamgla/selenium-cucumber4-demo)). This project gives you a basic project setup, along with some sample tests and supporting classes. The master branch uses a more classic approach, using action classes and lightweight page objects.
 ### The project directory structure
 The project has build scripts for both Maven and Gradle, and follows the standard directory structure used in most Serenity projects:
 ```Gherkin
