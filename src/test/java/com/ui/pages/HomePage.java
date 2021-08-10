@@ -57,10 +57,10 @@ public class HomePage extends PageObject
       return homePageHeader.getText();
    }
 
-   public List getPoductList()
+   public List<String> getPoductList()
    {
 
-      List<String> productList = new ArrayList<>();
+      List<String> productList = new ArrayList<String>();
 
       int productSize = productListWebElement.size();
       for (int i = 0; i < productSize ; i++)

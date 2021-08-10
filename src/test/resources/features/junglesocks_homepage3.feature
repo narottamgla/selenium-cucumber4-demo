@@ -1,11 +1,11 @@
-Feature: Verify Jungle socks home page1
+Feature: Verify Jungle socks home page2
 
   Scenario: Verify jungle socks home page navigation
     Given I open the jungle socks home page url
     Then I should see jungle socks home page title as "JungleSocks"
     Then I should see jungle socks home page header as "Welcome To Jungle Socks!"
 
-  Scenario: Verify diffrent product available on JungleSocks home page
+  Scenario: Verify diffrent product available on JungleSocks home page2
     Given I open the jungle socks home page url
     Then I should see jungle socks home page title as "JungleSocks"
     Then I should see different products on jungle socks home page
@@ -14,7 +14,7 @@ Feature: Verify Jungle socks home page1
       | elephant |
       | giraffe  |
 
-  Scenario Outline: Verify diffrent product product catalog price and quantity1
+  Scenario Outline: Verify diffrent product product catalog price and quantity2
     Given I open the jungle socks home page url
     Then I should see jungle socks home page title as "JungleSocks"
     Then I should see product as "<productName>" with price as "<price>" and instock quantity as "<instock>"
@@ -26,7 +26,7 @@ Feature: Verify Jungle socks home page1
       | elephant    |    35 |       3 |
       | giraffe     |    17 |      15 |
 
-  Scenario Outline: Verify diffrent product catalog price and quantity1
+  Scenario Outline: Verify diffrent product catalog price and quantity2
     Given I open the jungle socks home page url
     Then I should see jungle socks home page title as "JungleSocks"
     When I enter "zebra" product quantity as "<zebraQuantity>"

@@ -6,8 +6,6 @@ package com.ui.steps;
 import java.util.List;
 
 import com.ui.actions.HomePageActions;
-import com.ui.utils.CommonUtils;
-
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import net.thucydides.core.annotations.Steps;
@@ -41,7 +39,7 @@ public class HomePageSteps
    }
 
    @Then("I should see different products on jungle socks home page")
-   public void i_should_see_different_products_on_jungle_socks_home_page(List productList)
+   public void i_should_see_different_products_on_jungle_socks_home_page(List<String> productList)
    {
       homePageActions.verifyJungleSocksHomeProductDetails(productList);
    }

@@ -355,7 +355,7 @@ environments {
   
 You use the `environment` system property to determine which environment to run against. For example to run the tests in the staging environment, you could run:
 ```json
-$ mvn clean verify -Denvironment=staging
+$ mvn clean test -P TestJunit
 ```
 
 See [**this article**](https://johnfergusonsmart.com/environment-specific-configuration-in-serenity-bdd/) for more details about this feature.

@@ -26,7 +26,7 @@ public class ProductPurchaseSteps
 
    String state;
    String stateTx;
-   HashMap<String, Integer> productQuantity = new HashMap<>();
+   HashMap<String, Integer> productQuantity = new HashMap<String, Integer>();
 
    @When("I enter {string} product quantity as {string}")
    public void i_enter_product_quantity_as(String productName, String quantity)
